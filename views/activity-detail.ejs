@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html ng-app = "app">
+    <head>
+        <meta charset="utf-8">
+        <title><%= page %></title>
+
+        <link rel="stylesheet" href="/stylesheets/style.css">
+    </head>
+    <body>
+
+        <ng-view></ng-view>
+
+        <!-- Libraries -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
+
+        <script type="text/ng-template" id="/activities.html">
+            <table class="activity-group">
+                <tr>
+                    <th>S.No.</th>
+                    <th>Time</th>
+                    <th>Image</th>
+                    <th>Action</th>
+                </tr>
+                <tr class="activity-row" ng-repeat="activity in activities">
+                    <td>{{$index}}</td>
+                    <td>{{activity.date_time }}</td>
+                    <td>{{activity.photo}}</td>
+                    <td>{{activity.action}}</td>
+                </tr>
+            </table>
+        </script>
+
+
+        <script>
+            angular.module ('app', ['ngRoute'])
+
+                .factory ('Activities', ['$http', function ($http) {
+
+                    var page = document.title;
+                    // console.log("Page", page);
+                    return $http.get ('/activities/'+page+'/admin');
+                }])
+
+                .controller ('ActivityController', ['$scope', '$http', 'Activities', function ($scope, $http, Activities) {
+
+                    Activities.success (function (data) {
+                        // console.log("data", data);
+                        var i;
+                        for (i = 0; i < data.length; i++) {
+                            var act = data[i];
+                            var d = new Date( parseInt( act['_id'].toString().substring(0,8), 16 ) * 1000 );
+                            act['date_time'] = d.toDateString () + "@" + d.getHours() + ":" + d.getMinutes () + ":" + d.getSeconds ();
+                        }
+                        $scope.activities = data;
+
+                    }).error (function (data, status) {
+                        console.log(data, status);
+                        $scope.activities = [];
+                    });
+                }])
+
+                .config (['$routeProvider', function ($routeProvider) {
+                    $routeProvider
+                        .when ('/', {
+                            templateUrl: '/activities.html',
+                            controller: 'ActivityController'
+                        });
+                }]);
+        </script>
+    </body>
+</html>

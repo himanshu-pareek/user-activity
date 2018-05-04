@@ -1,0 +1,30 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.watch-image {
+    height: 100px;
+    width: 100px
+}
+
+.activity-group {
+    width: 80%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.activity-group tr th {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.activity-row td {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+}

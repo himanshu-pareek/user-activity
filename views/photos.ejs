@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html ng-app = "app">
+    <head>
+        <meta charset="utf-8">
+        <title><%= page %></title>
+
+        <link rel="stylesheet" href="/stylesheets/style.css">
+    </head>
+    <body>
+
+        <ng-view></ng-view>
+
+        <!-- Libraries -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
+
+        <script type="text/ng-template" id="/photos.html">
+            <div class="images-group">
+                <div class="watch-image-div" ng-repeat="photo in photos">
+                    <img class="watch-image" src="/images/{{photo}}" ng-mouseover="save (photo, '<%= page %>', 'hover')" ng-click="save (photo, '<%= page %>', 'click')" /><br />
+                </div>
+            </div>
+        </script>
+
+
+        <script>
+            angular.module ('app', ['ngRoute'])
+
+                .factory ('Photos', ['$http', function ($http) {
+                    var page = document.title;
+                    return $http.get ('/activities/' + page);
+                }])
+
+                .controller ('PhotoController', ['$scope', '$http', 'Photos', function ($scope, $http, Photos) {
+                    Photos.success (function (data) {
+                        // console.log("data", data);
+                        $scope.photos = data;
+                    }).error (function (data, status) {
+                        console.log(data, status);
+                        $scope.photos = [];
+                    });
+
+                    $scope.save = function (photo, page, action) {
+                        var headers = new Headers ();
+                        headers.append ('Content-Type', 'application/x-www-form-urlencoded');
+                        let urlSearchParams = new URLSearchParams ();
+                        urlSearchParams.append ('photo', photo);
+                        urlSearchParams.append ('page', page);
+                        urlSearchParams.append ('action', action);
+                        let body = urlSearchParams.toString ();
+                        $http.post('/activities/', body, {headers:headers})
+                            .success ((data) => {
+                                // console.log(data);
+                            })
+                            .error ((error) => {
+                                console.log(error);
+                            });
+                        // console.log(photo, page, action);
+                    }
+                }])
+
+                .config (['$routeProvider', function ($routeProvider) {
+                    $routeProvider
+                        .when ('/', {
+                            templateUrl: '/photos.html',
+                            controller: 'PhotoController'
+                        });
+                }]);
+        </script>
+    </body>
+</html>
