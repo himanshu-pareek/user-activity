@@ -25,6 +25,6 @@ npm start
 
 # Usages
 
-Visit localhost:3000/:id to view 5 images. This page will track user activity (click, hover on image).
+Visit http://localhost:3000/:id to view 5 images. This page will track user activity (click, hover on image).
 
-Visit localhost:3000/:id/admin to view all user activity on the page localhost:3000/:id in form of a list.
+Visit http://localhost:3000/:id/admin to view all user activity on the page localhost:3000/:id in form of a list.
